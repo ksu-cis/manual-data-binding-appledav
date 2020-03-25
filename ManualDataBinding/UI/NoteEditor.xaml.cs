@@ -19,9 +19,49 @@ namespace ManualDataBinding.UI
     /// </summary>
     public partial class NoteEditor : UserControl
     {
+
+        private Note noteBacking;
+
+        /// <summary>
+        /// The note that will be edited by this control
+        /// </summary>
+        public Note note
+        {
+            get
+            {
+                return noteBacking;
+            }
+            set
+            {
+                if (noteBacking != null) noteBacking.NoteChanged -= OnNoteChange;
+                noteBacking = value;
+                if (noteBacking != null)
+                {
+                    noteBacking.NoteChanged += OnNoteChange;
+                    OnNoteChange(noteBacking, new EventArgs());
+                }
+            }
+        }
         public NoteEditor()
         {
             InitializeComponent();
+        }
+
+        public void OnNoteChange(object sender, EventArgs e)
+        {
+            if (note == null) return;
+            Title.Text = note.Title;
+            Body.Text = note.Body;
+        }
+
+        public void OnTitleChanged(object sender, TextChangedEventArgs e)
+        {
+            note.Title = Title.Text;
+        }
+
+        public void OnBodyChanged(object sender, TextChangedEventArgs e)
+        {
+            note.Body = Body.Text;
         }
     }
 }
